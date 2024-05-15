@@ -11,7 +11,6 @@ import (
 	"fmt"
 
 	"github.com/btcsuite/btcd/rpcclient"
-
 	"github.com/namecoin/ncbtcjson"
 )
 
@@ -70,9 +69,12 @@ func (r FutureNameShowResult) Receive() (*ncbtcjson.NameShowResult, error) {
 //
 // See NameShow for the blocking version and more details.
 func (c *Client) NameShowAsync(name string, options *ncbtcjson.NameShowOptions) FutureNameShowResult {
-	if options != nil && options.NameEncoding == ncbtcjson.Hex {
-		name = hex.EncodeToString([]byte(name))
+	if options == nil {
+		options = &ncbtcjson.NameShowOptions{}
 	}
+
+	options.NameEncoding, options.ValueEncoding = ncbtcjson.Hex, ncbtcjson.Hex
+	name = hex.EncodeToString([]byte(name))
 
 	cmd := ncbtcjson.NewNameShowCmd(name, options)
 
